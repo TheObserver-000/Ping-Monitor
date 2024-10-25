@@ -1,5 +1,3 @@
-#import tkinter as tk
-#from tkinter import ttk
 import customtkinter as ctk
 from PIL import Image
 import os
@@ -9,6 +7,16 @@ import time
 import threading
 import playsound
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+window = ctk.CTk()
+window.title("Ping Monitor")
+window.configure(background = "#483D8B")
+window.geometry("1300x650")
+window.minsize(950,608) 
+window.iconbitmap(os.path.join(base_dir, "Assets", "pingmonitor_logo.png")) 
+window.columnconfigure((3,4,5), weight= 1)
+window.rowconfigure(2, weight= 1)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,11 +115,9 @@ def warning_highlight(warning_mode, condition):
 def get_time():
     time_string = time.strftime("%H:%M:%S")
     printtxt(f"(Time: {time_string})\t")
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-
 def ping_process(ip, first_threshold, second_threshold, sound_mode, time_mode, warning_mode, router_mode):
 
     ping_output = ping(ip)
@@ -163,39 +169,15 @@ def ping_process(ip, first_threshold, second_threshold, sound_mode, time_mode, w
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-base_dir = os.path.dirname(os.path.abspath(__file__))
-ip_file_path = os.path.join(base_dir, "Settings", "ip_addresses.txt")
-ip_addresses = load_ip_addresses(ip_file_path)
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-window = ctk.CTk()
-window.title("Ping Monitor")
-window.configure(background = "#483D8B")
-window.geometry("1300x650")
-window.minsize(950,541) 
-window.iconbitmap(os.path.join(base_dir, "Assets", "pingmonitor_logo.png")) 
-window.columnconfigure((3,4,5), weight= 1)
-window.rowconfigure(2, weight= 1)
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------------------------------------------------------------------------------
 ipentersave = ""
 def custom_ip_check(*args):
     global ip_address
     global ipentersave
 
-    ip_manuall = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ipenter.get())    #checks for correct IP format
+    ip_manuall = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ipenter.get())
     if ip_manuall:
         ip_manuall = ip_manuall.group(0)
-        if comboboxip.get() == (len(ipl)-1):
+        if comboboxip.get() == ipl[-1]:
             ip_address = ip_manuall 
         ipentersave = ip_manuall 
     elif ipenter.get() == "":
@@ -214,12 +196,14 @@ def choose_ip(*args):
     global ip_address
     global ipentersave
 
-    if comboboxip.get() == ipl[-1]:  
-        ip_manuall = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ipenter.get())    #checks for correct IP format
+    if comboboxip.get() == ipl[-1]: 
+        ipenter.configure(border_color= col6) 
+        ip_manuall = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ipenter.get())
         if ip_manuall:
             ip_manuall = ip_manuall.group(0)
             ip_address = ip_manuall 
     else:
+        ipenter.configure(border_color= col10) 
         ip_address = comboboxip.get()
 
     if ipentersave == ip_address:
@@ -319,8 +303,10 @@ def scrollfix():
     global scrollpo
     if scrollpo==1:
         scrollpo=0
+        Yfixbutton.configure(fg_color= col10)
     elif scrollpo==0:
         scrollpo=1
+        Yfixbutton.configure(fg_color= col6)
 
 def startstop():
     global start_indicator
@@ -367,6 +353,8 @@ def main_loop():
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
+ip_file_path = os.path.join(base_dir, "Settings", "ip_addresses.txt")
+ip_addresses = load_ip_addresses(ip_file_path)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 start_indicator = 0
 scrollpo = 1
@@ -381,7 +369,7 @@ warning_mode = 0
 router_mode = 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 pad1  = 0
-pad2  = 3
+pad2  = 10
 col1  = "#E0FFFF"
 col2  = "#EFEFEF"
 col3  = "#151515"
@@ -393,52 +381,52 @@ col8  = "#1E90FF"
 col9  = "#005FC5"
 col10 = "#483D8B"
 
-font1_1 = ("calibri", 9)
-font1_2 = ("calibri", 10)
-font1_3 = ("calibri", 12)
-font2   = ("Consolas", 12)
+font1_1 = ("calibri", 14)
+font1_2 = ("calibri", 14)
+font1_3 = ("calibri", 20)
+font2   = ("Consolas", 16)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-frame1_r0t2_c0  = ctk.CTkFrame(window, width= 35, height= 300, bg_color= col5, corner_radius=0)
+frame1_r0t2_c0  = ctk.CTkFrame(window, width= 35, height= 300, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame1_r0t2_c0.grid(row = 0, column = 0, padx= pad1, pady= pad1, rowspan= 4, sticky= "nsew")
 
-frame2_r0_c1t2  = ctk.CTkFrame(window, width= 200, height= 35, bg_color= col5, corner_radius=0)
+frame2_r0_c1t2  = ctk.CTkFrame(window, width= 200, height= 35, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame2_r0_c1t2.grid(row = 0, column = 1, padx= pad1, pady= pad1, columnspan= 2, sticky= "nsew")
 
-frame3_r1_c1t2  = ctk.CTkFrame(window, width= 200, height= 400, bg_color= col4, corner_radius=0)
+frame3_r1_c1t2  = ctk.CTkFrame(window, width= 200, height= 400, fg_color= col4, bg_color = col5, corner_radius=10, border_width= 3, border_color= col10)
 frame3_r1_c1t2.grid(row = 1, column = 1, padx= pad1, pady= pad1, sticky= "nsew")
 #frame4 is gone
-frame5_r2_c1t2  = ctk.CTkFrame(window, width= 200, bg_color= col5, corner_radius=0)
+frame5_r2_c1t2  = ctk.CTkFrame(window, width= 200, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame5_r2_c1t2.grid(row = 2, column = 1, padx= pad1, pady= pad1, columnspan= 2, sticky= "nsew")
 
-frame6_r3_c1t2  = ctk.CTkFrame(window, width= 200, height= 100, bg_color= col5, corner_radius=0)
+frame6_r3_c1t2  = ctk.CTkFrame(window, width= 200, height= 100, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame6_r3_c1t2.grid(row = 3, column = 1, padx= pad1, pady= pad1, columnspan= 2, sticky= "nsew")
 frame6_r3_c1t2.columnconfigure((0,1,2), weight=1)
 frame6_r3_c1t2.rowconfigure((0,1,2), weight=1)
 
-frame7_r0_c3t5  = ctk.CTkFrame(window, width= 300, height= 35, bg_color= col5, corner_radius=0)
+frame7_r0_c3t5  = ctk.CTkFrame(window, width= 300, height= 35, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame7_r0_c3t5.grid(row = 0, column = 3, padx= pad1, pady= pad1, columnspan= 3, sticky= "nsew")
 
-frame8_r2_c3t5  = ctk.CTkFrame(window, width= 500, height= 300, bg_color= col3)
-frame8_r2_c3t5.grid(row = 1, column = 3, padx= pad2, pady= pad2, columnspan= 3 ,rowspan= 2, sticky= "nsew")
+frame8_r2_c3t5  = ctk.CTkFrame(window, width= 500, height= 300, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 10)
+frame8_r2_c3t5.grid(row = 1, column = 3, padx= pad1, pady= pad1, columnspan= 3 ,rowspan= 2, sticky= "nsew")
 frame8_r2_c3t5.columnconfigure(0, weight=3)
 frame8_r2_c3t5.rowconfigure(0, weight= 3)
 
-frame9_r3_c3    = ctk.CTkFrame(window, width= 100, height= 100, bg_color= col5, corner_radius=0)
+frame9_r3_c3    = ctk.CTkFrame(window, width= 100, height= 100, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame9_r3_c3.grid(row = 3, column = 3, padx= pad1, pady= pad1, sticky= "nsew")
 frame9_r3_c3.columnconfigure((0,1,2), weight=1)
 frame9_r3_c3.rowconfigure((0,1,2), weight=1)
 
-frame10_r3_c4   = ctk.CTkFrame(window, width= 100, height= 100, bg_color= col5, corner_radius=0)
+frame10_r3_c4   = ctk.CTkFrame(window, width= 100, height= 100, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame10_r3_c4.grid(row = 3, column = 4, padx= pad1, pady= pad1, sticky= "nsew")
 frame10_r3_c4.columnconfigure((0,1,2), weight=1)
 frame10_r3_c4.rowconfigure((0,1,2), weight=1)
 
-frame11_r3_c5   = ctk.CTkFrame(window, width= 100, height= 100, bg_color= col5, corner_radius=0)
+frame11_r3_c5   = ctk.CTkFrame(window, width= 100, height= 100, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame11_r3_c5.grid(row = 3, column = 5, padx= pad1, pady= pad1, sticky= "nsew")
 frame11_r3_c5.columnconfigure((0,1,2), weight=1)
 frame11_r3_c5.rowconfigure((0,1,2), weight=1)
 
-frame12_r0t2_c6 = ctk.CTkFrame(window, width= 35, height= 300, bg_color= col5, corner_radius=0)
+frame12_r0t2_c6 = ctk.CTkFrame(window, width= 35, height= 300, fg_color= col5, bg_color = col5, corner_radius=0, border_width= 0)
 frame12_r0t2_c6.grid(row = 0, column = 6, padx= pad1, pady= pad1, rowspan= 4, sticky= "nsew")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -450,90 +438,88 @@ frame12_r0t2_c6.grid(row = 0, column = 6, padx= pad1, pady= pad1, rowspan= 4, st
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-lbl1 = ctk.CTkLabel(frame3_r1_c1t2, text = "IP addresses:", fg_color = col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 0, column = 0, columnspan = 2, sticky= "w")
-lbl2 = ctk.CTkLabel(frame3_r1_c1t2, text = "Sound options:", fg_color = col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 0, column = 2, columnspan = 2, sticky= "w")
+lblspace0 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 0, column = 0, pady= 3, columnspan = 4)
+
+lbl1 = ctk.CTkLabel(frame3_r1_c1t2, text = "IP Addresses:", fg_color = col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 1, column = 0, padx= pad2, columnspan = 2, sticky= "w")
+lbl2 = ctk.CTkLabel(frame3_r1_c1t2, text = "Sound Options:", fg_color = col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 1, column = 2, padx= pad2, columnspan = 2, sticky= "w")
 
 ipl = ip_addresses
-comboboxip= ctk.CTkOptionMenu(frame3_r1_c1t2, command = choose_ip, values = ipl, font= font1_2, corner_radius=3, anchor="center")
+comboboxip= ctk.CTkOptionMenu(frame3_r1_c1t2, command = choose_ip, values = ipl, font= font1_2, dropdown_font= font1_2, corner_radius=3, anchor="w", bg_color= col4, fg_color = col3, button_color= col3, button_hover_color= col7, text_color= col6, dropdown_fg_color= col3, dropdown_hover_color=col4, dropdown_text_color=col6, width=140)
 comboboxip.set(ipl[0])
-comboboxip.grid(row=1, column=0, columnspan = 2, padx = 3, pady = 3, sticky= "w")
+comboboxip.grid(row=2, column=0, columnspan = 2, padx= pad2, pady = 3, sticky= "w")
 
 sdl = ["Silent","Normal","Loud"]
-comboboxsound= ctk.CTkOptionMenu(frame3_r1_c1t2, command = choose_sound_mode, values = sdl, font= font1_2, corner_radius=3, anchor="center")
+comboboxsound= ctk.CTkOptionMenu(frame3_r1_c1t2, command = choose_sound_mode, values = sdl, font= font1_2, dropdown_font= font1_2, corner_radius=3, anchor="center", bg_color= col4, fg_color = col3, button_color= col3, button_hover_color= col7, text_color= col6, dropdown_fg_color= col3, dropdown_hover_color=col4, dropdown_text_color=col6, width=90)
 comboboxsound.set(sdl[1])
-comboboxsound.grid(row=1, column=2, columnspan = 2, padx = 3, pady = 3, sticky= "w")
+comboboxsound.grid(row=2, column=2, columnspan = 2, padx= pad2, pady = 3, sticky= "w")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-lblspace1 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 2, column = 0, columnspan = 4)
+lblspace1 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 3, column = 0, columnspan = 4)
 
-lbl3 = ctk.CTkLabel(frame3_r1_c1t2, text = "Custom IP address:", fg_color = col4, text_color= col1, font = font1_1).grid(row = 3, column = 0, columnspan = 2, sticky= "w")
-lbl4 = ctk.CTkLabel(frame3_r1_c1t2, text = "Current IP address:", fg_color = col4, text_color= col1, font = font1_1).grid(row = 3, column = 2, columnspan = 2, sticky= "w")
+lbl3 = ctk.CTkLabel(frame3_r1_c1t2, text = "Custom IP Address:", fg_color = col4, text_color= col1, font = font1_1).grid(row = 4, column = 0, padx= pad2, columnspan = 2, sticky= "w")
+lbl4 = ctk.CTkLabel(frame3_r1_c1t2, text = "Current IP Address:", fg_color = col4, text_color= col1, font = font1_1).grid(row = 4, column = 2, padx= pad2, columnspan = 2, sticky= "w")
 
-ipenter = ctk.CTkEntry(frame3_r1_c1t2, width=100, font = font1_2, corner_radius=3)
-ipenter.grid(row=4, column=0, columnspan = 2, padx = 3, pady = 3, sticky= "nsw")
+ipenter = ctk.CTkEntry(frame3_r1_c1t2, width=110, font = font1_2, corner_radius=3, border_width = 1, bg_color = col4, fg_color= col3, border_color= col10, text_color= col2, justify="left")
+ipenter.grid(row=5, column=0, columnspan = 2, padx= pad2, pady = 3, sticky= "nsw")
 ipenter.bind("<Return>", custom_ip_check)
 
-lblshowip = ctk.CTkLabel(frame3_r1_c1t2, fg_color= col4, text_color= col6, anchor="w", font = font1_2, text= "")
-lblshowip.grid(row = 4, column = 2, columnspan = 2, sticky= "w")
+lblshowip = ctk.CTkLabel(frame3_r1_c1t2, fg_color= col4, text_color= col6, anchor="w", font = font1_2, text= "", corner_radius = 0)
+lblshowip.grid(row = 5, column = 2, padx= pad2, columnspan = 2, sticky= "w")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-lblspace2 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 5, column = 0, columnspan = 4)
+lblspace2 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 6, column = 0, columnspan = 4)
 
-lbl5 = ctk.CTkLabel(frame3_r1_c1t2, text = "First threshold:", fg_color= col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 6, column = 0, columnspan = 2, sticky= "w")
-lbl6 = ctk.CTkLabel(frame3_r1_c1t2, text = "Second threshold:", fg_color= col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 6, column = 2, columnspan = 2, sticky= "w")
+lbl5 = ctk.CTkLabel(frame3_r1_c1t2, text = "First Threshold:", fg_color= col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 7, column = 0, padx= pad2, columnspan = 2, sticky= "w")
+lbl6 = ctk.CTkLabel(frame3_r1_c1t2, text = "Second Threshold:", fg_color= col4, text_color= col1, font = font1_1, corner_radius = 0).grid(row = 7, column = 2, padx= pad2, columnspan = 2, sticky= "w")
 
-first_t = ctk.CTkEntry(frame3_r1_c1t2, width= 40, font = font1_2, corner_radius=3)
-first_t.grid(row=7, column=0, padx = 3, pady = 3, sticky= "nsw")
+first_t = ctk.CTkEntry(frame3_r1_c1t2, width= 40, font = font1_2, corner_radius=3, border_width = 1, bg_color = col4, fg_color= col3, border_color= col6, text_color= col2, justify="center")
+first_t.grid(row=8, column=0, padx= pad2, pady = 3, sticky= "nsw")
 first_t.bind("<Return>", choose_threshold1)
 
-second_t = ctk.CTkEntry(frame3_r1_c1t2, width= 40, font = font1_2, corner_radius=3)
-second_t.grid(row=7, column=2, padx = 3, pady = 3, sticky= "nsw")
+second_t = ctk.CTkEntry(frame3_r1_c1t2, width= 40, font = font1_2, corner_radius=3, border_width = 1, bg_color = col4, fg_color= col3, border_color= col6, text_color= col2, justify="center")
+second_t.grid(row=8, column=2, padx= pad2, pady = 3, sticky= "nsw")
 second_t.bind("<Return>", choose_threshold1)
 
-lblshowt1 = ctk.CTkLabel(frame3_r1_c1t2 , fg_color= col4, text_color= col6, anchor="w", font = font1_2, text= "")
-lblshowt1.grid(row = 7, column = 1, sticky= "e")
-lblshowt2 = ctk.CTkLabel(frame3_r1_c1t2 , fg_color= col4, text_color= col6, anchor="w", font = font1_2, text= "")
-lblshowt2.grid(row = 7, column = 3, sticky= "e")
+lblshowt1 = ctk.CTkLabel(frame3_r1_c1t2 , fg_color= col4, text_color= col6, anchor="w", font = font1_2, text= "", corner_radius = 0, width= 65)
+lblshowt1.grid(row = 8, column = 1, padx= pad1, sticky= "w")
+lblshowt2 = ctk.CTkLabel(frame3_r1_c1t2 , fg_color= col4, text_color= col6, anchor="w", font = font1_2, text= "", corner_radius = 0, width= 35)
+lblshowt2.grid(row = 8, column = 3, padx= pad1, sticky= "w")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-lblspace3 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 8, column = 0, columnspan = 4)
-
-time_mode = 0
+lblspace3 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 9, column = 0, columnspan = 4)
 
 ts = ctk.IntVar(value= time_mode)
-tswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_time_mode, variable= ts, onvalue= 1, offvalue= 0, text= "Time")
-tswitch.grid(row = 9, column = 0, columnspan = 4, padx = 3, pady = 3, sticky= "w")
+tswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_time_mode, variable= ts, onvalue= 1, offvalue= 0, text= "Time", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
+tswitch.grid(row = 10, column = 0, columnspan = 4, padx= pad2, pady = 3, sticky= "w")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-lblspace4 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 10, column = 0, columnspan = 4)
-
-warning_mode = 0
+lblspace4 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 11, column = 0, columnspan = 4)
 
 hs =  ctk.IntVar(value = warning_mode)
-hswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_warning_mode, variable= hs, onvalue= 1, offvalue= 0, text= "Warning highlight")
-hswitch.grid(row = 11, column = 0, columnspan = 4, padx = 3, pady = 3, sticky= "w")
+hswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_warning_mode, variable= hs, onvalue= 1, offvalue= 0, text= "Warning highlight", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
+hswitch.grid(row = 12, column = 0, columnspan = 4, padx= pad2, pady = 3, sticky= "w")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-lblspace5 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 12, column = 0, columnspan = 4)
-
-router_mode = 0
+lblspace5 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 13, column = 0, columnspan = 4)
 
 rs =  ctk.IntVar(value = router_mode)
-rswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_router_mode, variable= rs, onvalue= 1, offvalue= 0, text= "Router check")
-rswitch.grid(row = 13, column = 0, columnspan = 4, padx = 3, pady = 3, sticky= "w")
+rswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_router_mode, variable= rs, onvalue= 1, offvalue= 0, text= "Router check", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
+rswitch.grid(row = 14, column = 0, columnspan = 4, padx= pad2, pady = 3, sticky= "w")
+
+lblspace6 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 15, column = 0, pady= 3, columnspan = 4)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-textbox = ctk.CTkTextbox(frame8_r2_c3t5, corner_radius=0)
+textbox = ctk.CTkTextbox(frame8_r2_c3t5, font= font2, state= "disabled", corner_radius=10, border_width = 3, border_color= col10, bg_color = "transparent", fg_color= col3, text_color= col2, scrollbar_button_color= col4, scrollbar_button_hover_color= col4)
 textbox.grid(row=0, column=0, sticky = "nswe")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-logolblpic = ctk.CTkImage(Image.open(os.path.join(base_dir, "Assets", "pingmonitor.png")))
-startpic = ctk.CTkImage(Image.open(os.path.join(base_dir, "Assets", "start.png")))
-stoppic  = ctk.CTkImage(Image.open(os.path.join(base_dir, "Assets", "stop.png")))
+logolblpic = ctk.CTkImage(Image.open(os.path.join(base_dir, "Assets", "pingmonitor.png")), size=(288,88))
+startpic = ctk.CTkImage(Image.open(os.path.join(base_dir, "Assets", "start.png")), size=(220,73))
+stoppic  = ctk.CTkImage(Image.open(os.path.join(base_dir, "Assets", "stop.png")), size=(220,73))
 
 logolbl = ctk.CTkLabel(frame6_r3_c1t2, bg_color = col5, padx = 10, pady = 1, image = logolblpic, text="")
 logolbl.grid(row= 1, column= 1, sticky="nsw")
 
-clearbutton = ctk.CTkButton(frame9_r3_c3, command= clearterminal, text= "Clear text box", font = font1_3)
+clearbutton = ctk.CTkButton(frame9_r3_c3, command= clearterminal, text= "Clear Text Box", font = font1_3, bg_color= col5, fg_color= col6, hover_color= col7, text_color= col3, corner_radius= 5, width= 1)
 clearbutton.grid(row= 1, column= 1)
 
-startbutton = ctk.CTkButton(frame10_r3_c4, command = startstop, image= startpic, text="")
+startbutton = ctk.CTkButton(frame10_r3_c4, command = startstop, image= startpic, text="", bg_color= col5, fg_color= col8, hover_color= col9, corner_radius= 5)
 startbutton.grid(row= 1, column= 1)
 
-Yfixbutton = ctk.CTkButton(frame11_r3_c5, command = scrollfix, text= "Scroll fix", font = font1_3)
+Yfixbutton = ctk.CTkButton(frame11_r3_c5, command = scrollfix, text= "Scroll Fix", font = font1_3, bg_color= col5, fg_color= col6, hover_color= col7, text_color= col3, corner_radius= 5, width= 1)
 Yfixbutton.grid(row= 1, column= 1)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -560,10 +546,3 @@ mloop.start()
 window.bind("<Destroy>", on_destroy)
 
 window.mainloop()
-
-#how to update exe file (for me):
-#open cmd
-#cd /d D:\code\ping (the directory of file)
-#pyinstaller --noconsole --icon=app_icon.ico --add-data "Data;Data" --add-data "Resource;Resource" ping_monitor.py
-#add --onefile after pyinstaller to bundle the entire code and its dependencies
-#add --noconsole after pyinstaller to remove console
