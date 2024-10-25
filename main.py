@@ -78,26 +78,32 @@ def sound_call(sound_mode, condition):
         pass
     elif sound_mode == "Normal":
         if condition == 1:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "normal_alert.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "normal_alert.mp3")
         elif condition == 2:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "normal_warning.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "normal_warning.mp3")
         elif condition == 3:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "normal_error.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "normal_error.mp3")
         elif condition == 4:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "normal_router.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "normal_router.mp3")
         elif condition == 5:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "normal_unknown.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "normal_unknown.mp3")
+        plays = threading.Thread(target= lambda: playsound.playsound(pathtosound))
+        plays.daemon = True
+        plays.start()
     elif sound_mode == "Loud":
         if condition == 1:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "loud_alert.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "loud_alert.mp3")
         elif condition == 2:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "loud_warning.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "loud_warning.mp3")
         elif condition == 3:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "loud_error.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "loud_error.mp3")
         elif condition == 4:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "loud_router.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "loud_router.mp3")
         elif condition == 5:
-            playsound.playsound(os.path.join(base_dir, "Sounds", "loud_unknown.mp3"))
+            pathtosound = os.path.join(base_dir, "Sounds", "loud_unknown.mp3")
+        plays = threading.Thread(target= lambda: playsound.playsound(pathtosound))
+        plays.daemon = True
+        plays.start()
 
 def warning_highlight(warning_mode, condition):
     if warning_mode == 0:
@@ -118,7 +124,9 @@ def get_time():
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
+comfort_from_error = 0
 def ping_process(ip, first_threshold, second_threshold, sound_mode, time_mode, warning_mode, router_mode):
+    global comfort_from_error
 
     ping_output = ping(ip)
 
@@ -140,6 +148,7 @@ def ping_process(ip, first_threshold, second_threshold, sound_mode, time_mode, w
             print_timeout(is_timeout(ping_output))
             warning_highlight(warning_mode, 3)
             sound_call(sound_mode, 3)
+        comfort_from_error +=1
 
     else:
         ping_time = get_ping_time(ping_output)
@@ -155,6 +164,9 @@ def ping_process(ip, first_threshold, second_threshold, sound_mode, time_mode, w
                     warning_highlight(warning_mode, 1)
                     sound_call(sound_mode, 1)
             else:
+                if comfort_from_error != 0:
+                    sound_call(sound_mode, 1)
+                    comfort_from_error = 0
                 printtxt("\n")
         else:
             printtxt(f"Unknown Error. Failed to get ping time. More information:\n{ping_output}\n")
@@ -541,6 +553,7 @@ choose_router_mode()
 router_mode_check()
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 mloop = threading.Thread(target = main_loop)
+mloop.daemon = True
 mloop.start()
 
 window.bind("<Destroy>", on_destroy)
