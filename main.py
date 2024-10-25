@@ -48,6 +48,16 @@ def get_ping_time(ping_output):
         return int(time_ms.group(1))
     return None
 
+def ip_check(ip):
+    checked_ip = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ip)
+    if checked_ip:
+        checked_ip_list = ip.split(".")
+        for n in checked_ip_list:
+            if int(n) > 255:
+                return False
+        return True
+    return False
+
 def print_timeout(condition):
     if condition == 1:
         printtxt("Request timed out.")
@@ -186,12 +196,10 @@ def custom_ip_check(*args):
     global ip_address
     global ipentersave
 
-    ip_manuall = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ipenter.get())
-    if ip_manuall:
-        ip_manuall = ip_manuall.group(0)
+    if ip_check(ipenter.get()) == True:
         if comboboxip.get() == ipl[-1]:
-            ip_address = ip_manuall 
-        ipentersave = ip_manuall 
+            ip_address = ipenter.get() 
+        ipentersave = ipenter.get() 
     elif ipenter.get() == "":
         ipenter.delete(0, ctk.END)
         ipentersave = ""
@@ -210,10 +218,8 @@ def choose_ip(*args):
 
     if comboboxip.get() == ipl[-1]: 
         ipenter.configure(border_color= col6) 
-        ip_manuall = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ipenter.get())
-        if ip_manuall:
-            ip_manuall = ip_manuall.group(0)
-            ip_address = ip_manuall 
+        if ip_check(ipenter.get()) == True:
+            ip_address = ipenter.get()
     else:
         ipenter.configure(border_color= col10) 
         ip_address = comboboxip.get()
