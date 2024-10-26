@@ -6,6 +6,7 @@ import re
 import time
 import threading
 import playsound
+import json
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -31,10 +32,26 @@ def printtxt(txt):
     textbox.insert(ctk.END, txt)
     textbox.configure(state= "disabled")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
+def ip_check(ip):
+    checked_ip = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ip)
+    if checked_ip:
+        checked_ip_list = ip.split(".")
+        for n in checked_ip_list:
+            if int(n) > 255:
+                return False
+        return True
+    return False
+
 def load_ip_addresses(file_path):
     with open(file_path, 'r') as file:
         ip_addresses = [line.strip() for line in file.readlines()]
-        ip_addresses.append('(Custom)')
+    i = 0
+    while i < len(ip_addresses):
+        if ip_check(ip_addresses[i]) == False:
+            ip_addresses.pop(i)
+            i -= 1
+        i += 1
+    ip_addresses.append('(Custom)')
     return ip_addresses
 
 def ping(ip):
@@ -47,16 +64,6 @@ def get_ping_time(ping_output):
     if time_ms:
         return int(time_ms.group(1))
     return None
-
-def ip_check(ip):
-    checked_ip = re.search(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ip)
-    if checked_ip:
-        checked_ip_list = ip.split(".")
-        for n in checked_ip_list:
-            if int(n) > 255:
-                return False
-        return True
-    return False
 
 def print_timeout(condition):
     if condition == 1:
@@ -358,8 +365,10 @@ def main_loop():
                     ping_process(ip_address, first_threshold, second_threshold, sound_mode, time_mode, warning_mode, router_mode)
                     if scrollpo ==1:
                         textbox.yview_moveto(1.0)
-                    time.sleep(1)
-
+                    for i in range (9):
+                        if start_indicator != 1:
+                            break
+                        time.sleep(0.105)
     except Exception as error:
         #print(error)
         return
@@ -378,13 +387,41 @@ start_indicator = 0
 scrollpo = 1
 close = 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
-ip_address = None
-sound_mode = None
-first_threshold = 0 
-second_threshold = 0 
-time_mode = 0
-warning_mode = 0
-router_mode = 0
+try:
+    with open((os.path.join(base_dir, "Settings", "settings.json")), "r") as file:
+        settingsdict = json.load(file)
+    ip_address = settingsdict["ip_address"]
+    if ip_check(ip_address) == False:
+        raise Exception
+    sound_mode = settingsdict["sound_mode"]
+    sdl = ["Silent","Normal","Loud"]
+    if sound_mode not in sdl:
+        raise Exception
+    first_threshold = int(settingsdict["first_threshold"])
+    if first_threshold < 0 or first_threshold > 9999:
+        raise Exception
+    second_threshold = int(settingsdict["second_threshold"])
+    if second_threshold < 0 or second_threshold > 9999:
+        raise Exception
+    time_mode = int(settingsdict["time_mode"])
+    if time_mode != 0 and time_mode != 1:
+        raise Exception
+    warning_mode = int(settingsdict["warning_mode"])
+    if warning_mode != 0 and warning_mode != 1:
+        raise Exception
+    router_mode = int(settingsdict["router_mode"])
+    if router_mode not in (0,1):
+        raise Exception
+    backup_setting = 0
+except:
+    ip_address = None
+    sound_mode = None
+    first_threshold = 0 
+    second_threshold = 0 
+    time_mode = 0
+    warning_mode = 0
+    router_mode = 0
+    backup_setting = 1
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 pad1  = 0
 pad2  = 10
@@ -550,6 +587,15 @@ Yfixbutton.grid(row= 1, column= 1)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
+if backup_setting == 0:
+    if ip_address in ipl:
+        comboboxip.set(ip_address)
+    else:
+        comboboxip.set(ipl[-1])
+        ipenter.insert(0, ip_address)
+    comboboxsound.set(sound_mode)
+    first_t.insert(0, first_threshold)
+    second_t.insert(0, second_threshold)
 choose_ip()
 choose_sound_mode()
 choose_threshold1()
@@ -565,3 +611,15 @@ mloop.start()
 window.bind("<Destroy>", on_destroy)
 
 window.mainloop()
+
+settingsdict = {"ip_address": ip_address,
+    "sound_mode": sound_mode,
+    "first_threshold": str(first_threshold),
+    "second_threshold": str(second_threshold),
+    "time_mode": str(time_mode),
+    "warning_mode": str(warning_mode),
+    "router_mode": str(router_mode)
+    }
+
+with open((os.path.join(base_dir, "Settings", "settings.json")), "w") as file:
+    json.dump(settingsdict, file, indent= 4)
