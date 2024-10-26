@@ -547,13 +547,13 @@ tswitch.grid(row = 10, column = 0, columnspan = 4, padx= pad2, pady = 3, sticky=
 lblspace4 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 11, column = 0, columnspan = 4)
 
 hs =  ctk.IntVar(value = warning_mode)
-hswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_warning_mode, variable= hs, onvalue= 1, offvalue= 0, text= "Warning highlight", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
+hswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_warning_mode, variable= hs, onvalue= 1, offvalue= 0, text= "Warning Highlight", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
 hswitch.grid(row = 12, column = 0, columnspan = 4, padx= pad2, pady = 3, sticky= "w")
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
 lblspace5 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 13, column = 0, columnspan = 4)
 
 rs =  ctk.IntVar(value = router_mode)
-rswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_router_mode, variable= rs, onvalue= 1, offvalue= 0, text= "Router check", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
+rswitch = ctk.CTkSwitch(frame3_r1_c1t2, command= choose_router_mode, variable= rs, onvalue= 1, offvalue= 0, text= "Router Check", font= font1_2, text_color= col1, bg_color= col4, fg_color= col3, progress_color= col7, button_color= col6, button_hover_color= col7)
 rswitch.grid(row = 14, column = 0, columnspan = 4, padx= pad2, pady = 3, sticky= "w")
 
 lblspace6 = ctk.CTkLabel(frame3_r1_c1t2, fg_color = col4, corner_radius = 0, text="").grid(row = 15, column = 0, pady= 3, columnspan = 4)
