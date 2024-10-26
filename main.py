@@ -15,7 +15,7 @@ window.title("Ping Monitor")
 window.configure(background = "#483D8B")
 window.geometry("1300x650")
 window.minsize(950,608) 
-window.iconbitmap(os.path.join(base_dir, "Assets", "pingmonitor_logo.png")) 
+window.iconbitmap(os.path.join(base_dir, "app_icon.ico")) 
 window.columnconfigure((3,4,5), weight= 1)
 window.rowconfigure(2, weight= 1)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
